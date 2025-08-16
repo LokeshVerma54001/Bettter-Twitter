@@ -29,7 +29,7 @@ const ForYouPage = () => {
     const [tab, setTab] = useState('foryou');
     
   return (
-    <div className='w-[50%]  flex flex-col border-r border-l border-gray-600 lg:ml-[22rem] ml-[10rem] '>
+    <div className='lg:w-[50%] h-full w-[80%] flex flex-col border-r border-l border-gray-600 lg:ml-[22rem] ml-[10rem] '>
         <div className='flex w-full h-16 border-b border-gray-600 sticky top-0 bg-black z-10'>
             <div
                 className={`w-full hover:bg-gray-900 items-center justify-center flex cursor-pointer relative ${tab === 'foryou' ? 'text-white' : 'text-gray-400'}`}
