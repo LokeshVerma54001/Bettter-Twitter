@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 import MiniProfile from './MiniProfile'
 import { motion } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 
 const navbarMenus = [
     {
@@ -45,6 +46,11 @@ const navbarMenus = [
 ]
 
 const NavBar = () => {
+
+    const path = usePathname();
+
+    if(path === '/premium') return null
+
   return (
     <div className=' h-screen w-60 lg:w-90 border-gray-600 border-b flex flex-col items-end fixed top-0 left-0'>
         <div className=' w-80 h-screen flex flex-col items-center justify-end gap-8'>
