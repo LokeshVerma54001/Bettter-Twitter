@@ -49,7 +49,10 @@ const NavBar = () => {
 
     const path = usePathname();
 
-    if(path === '/premium') return null
+    if(path === '/premium'
+        || path === '/signup'
+        || path === '/login'
+    ) return null
 
   return (
     <div className=' h-screen w-60 lg:w-90 border-gray-600 border-b flex flex-col items-end fixed top-0 left-0'>
