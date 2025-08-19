@@ -1,12 +1,16 @@
-import ForYouPage from "@/components/ForYouPage";
-import HomeExtras from "@/components/HomeExtras";
+"use client"
 
+import ForYouPage from "../components/ForYouPage";
+import HomeExtras from "../components/HomeExtras";
+import ProtectPage from "../components/ProtectPage";
 
 export default function Home() {
   return (
-    <div className=" flex w-full h-screen">
-      <ForYouPage />
-      <HomeExtras />
-    </div>
+    <ProtectPage>
+      <div className=" flex w-full h-screen">
+        <ForYouPage />
+        <HomeExtras />
+      </div>
+    </ProtectPage>
   );
 }

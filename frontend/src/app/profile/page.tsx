@@ -1,13 +1,18 @@
+"use client"
+
 import React from 'react'
 import ProfileMain from './components/ProfileMain'
-import HomeExtras from '@/components/HomeExtras'
+import HomeExtras from '../../components/HomeExtras'
+import ProtectPage from '../../components/ProtectPage'
 
 const ProfilePage = () => {
   return (
-     <div className=' flex w-full h-screen'>
-        <ProfileMain />
-        <HomeExtras />
-    </div>
+     <ProtectPage>
+        <div className=' flex w-full h-screen'>
+          <ProfileMain />
+          <HomeExtras />
+        </div>
+     </ProtectPage>
   )
 }
 

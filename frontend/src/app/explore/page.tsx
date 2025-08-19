@@ -1,15 +1,19 @@
+"use client"
 
 import React from 'react'
 import SearchMain from './components/SearchMain'
 import SearchExtras from './components/SearchExtras'
+import ProtectPage from '../../components/ProtectPage'
 
 
 const ExplorePage = () => {
   return (
-    <div className=' w-full flex h-screen'>
-        <SearchMain />
-        <SearchExtras />
-    </div>
+    <ProtectPage>
+      <div className=' w-full flex h-screen'>
+          <SearchMain />
+          <SearchExtras />
+      </div>
+    </ProtectPage>
     
   )
 }

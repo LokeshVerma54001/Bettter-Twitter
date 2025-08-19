@@ -1,11 +1,16 @@
+"use client"
+
 import React from 'react'
 import MessageMain from './components/MessageMain'
+import ProtectPage from '../../components/ProtectPage'
 
 const MessagesPage = () => {
   return (
-    <div className=" flex w-full h-screen">
-        <MessageMain />
-    </div>
+    <ProtectPage>
+      <div className=" flex w-full h-screen">
+          <MessageMain />
+      </div>
+    </ProtectPage>
   )
 }
 

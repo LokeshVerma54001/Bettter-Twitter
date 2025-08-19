@@ -1,12 +1,27 @@
 "use client"
 
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useUserStore } from '../../stores/useUserStore'
 
 const LoginPage = () => {
+    
+    const navigation = useRouter();
 
-    const handleSubmit= (e: React.FormEvent<HTMLFormElement>) => {
+    const [loginInfo, setLoginInfo] = useState({
+        email:"",
+        password:""
+    });
+
+    const {login} = useUserStore();
+
+    const handleSubmit= async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const success = await login(loginInfo);
+        if(success){
+            navigation.push('/');
+        }
     }
 
   return (
@@ -14,7 +29,7 @@ const LoginPage = () => {
         <h1 className=' text-6xl font-extrabold'>
             X
         </h1>
-        <h1 className=' text-6xl font-extrabold'>
+        <h1 className=' text-6xl font-extrabold text-center'>
             Welcome Back
         </h1>
         <h2 className=' text-4xl'>Nice to see you!</h2>
@@ -26,11 +41,21 @@ const LoginPage = () => {
                 type="email" 
                 placeholder='Email'
                 className=' text-center border-gray-500 border-b rounded-2xl py-2 px-20 '
+                value={loginInfo.email}
+                onChange={(e)=> setLoginInfo((prevState)=>({
+                    ...prevState, 
+                    email: e.target.value
+                }))}
             />
             <input 
                 type="password" 
                 placeholder='Password'
                 className=' text-center border-gray-500 border-b rounded-2xl py-2 px-20 '
+                value={loginInfo.password}
+                onChange={(e)=> setLoginInfo((prevState)=>({
+                    ...prevState, 
+                    password: e.target.value
+                }))}
             />
             <button
                 type='submit'

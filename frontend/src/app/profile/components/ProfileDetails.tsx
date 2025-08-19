@@ -1,7 +1,7 @@
-import PostCard from '@/components/PostCard'
-import { Calendar, Check, CircleCheckBig } from 'lucide-react'
+import { Calendar, CircleCheckBig } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
+import PostCard from '../../../components/PostCard'
 
 const tabs = [{name:"Posts"}, {name:"Replies"}, {name:"Highlights"}, {name:"Articles"}, {name:"Media"}, {name:"Likes"}]
 
