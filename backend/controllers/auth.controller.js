@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const generateTokens = (userId) =>{
     const accessToken = jwt.sign({userId}, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '15m'
+        expiresIn: '60m'
     });
 
     const refereshToken = jwt.sign({userId}, process.env.REFERESH_TOKEN_SECRET,{
