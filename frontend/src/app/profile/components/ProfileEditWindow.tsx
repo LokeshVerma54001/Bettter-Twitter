@@ -5,7 +5,7 @@ import { useUserStore } from '../../../stores/useUserStore'
 
 const ProfileEditWindow = ({editProfileActive, setEditProfileActive}) => {
   
-    const {user} = useUserStore();
+    const {user, editProfile} = useUserStore();
 
     const [userInfo, setUserInfo] = useState({
         name: user?.name,
@@ -16,7 +16,38 @@ const ProfileEditWindow = ({editProfileActive, setEditProfileActive}) => {
     });
 
     const handleSubmit = async () =>{
+      try {
+        const success = await editProfile(userInfo);
+        if(success){
+          editProfileActive = false;
+        }else{
+          throw new Error("EditProfile store returned with false success")
+        }
+      } catch (error) {
+        console.log("error saving the profile changes", error)
+      }
+    }
 
+    const handleBannerImageChange = (e) =>{
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setUserInfo({ ...userInfo, bannerImage: reader.result});
+        }
+        reader.readAsDataURL(file); //base64
+      }
+    }
+
+    const handleProfileImageChange = (e) => {
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onloadend = () =>{
+          setUserInfo({...userInfo, profileImage: reader.result});
+        }
+        reader.readAsDataURL(file);
+      }
     }
 
     return (
@@ -39,31 +70,32 @@ const ProfileEditWindow = ({editProfileActive, setEditProfileActive}) => {
               Save
             </button>
           </div>
-
             {/* Banner wrapper */}
             <div className="relative h-60">
             {/* Banner image */}
             <label htmlFor="bannerImage" className="cursor-pointer">
-                <Image
-                src="/1080x360.jpg"
-                alt="banner"
-                className="object-cover"
-                width={1000}
-                height={1000}
-                />
+                <div className="relative w-[500px] h-[160px]">
+                  <Image
+                    src={user?.bannerImage || "/1080x360.jpg"}
+                    alt="banner"
+                    className="object-cover rounded-lg"
+                    fill
+                  />
+                </div>
             </label>
             <input 
                 type="file" 
                 id="bannerImage"
                 className="hidden"  // hides the input
                 accept="image/*"   // only allow image files
+                onChange={(e) => handleBannerImageChange(e)}
             />
 
             {/* Profile picture */}
             <div className="absolute top-20 left-5 rounded-full border-4 border-black">
                 <label htmlFor="profileImage" className="cursor-pointer">
                 <Image
-                    src="/pfp.jpg"
+                    src={user?.profileImage||"/pfp.jpg"}
                     alt="pfp"
                     width={126}  
                     height={126}
@@ -71,10 +103,11 @@ const ProfileEditWindow = ({editProfileActive, setEditProfileActive}) => {
                 />
                 </label>
                 <input 
-                type="file" 
-                id="profileImage"
-                className="hidden" 
-                accept="image/*"
+                  type="file" 
+                  id="profileImage"
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={(e) => handleProfileImageChange(e)}
                 />
             </div>
             </div>

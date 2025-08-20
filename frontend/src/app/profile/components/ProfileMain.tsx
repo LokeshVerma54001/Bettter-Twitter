@@ -14,7 +14,7 @@ const ProfileMain = () => {
         <div className='flex w-full h-16 justify-between items-center border-b border-gray-600 sticky top-0 bg-black z-10'>
             <div className=' ml-5'>
                 <h1 className=' font-extrabold text-2xl'>{user?.name}</h1>
-                <p className=' font-light text-gray-500 text-sm'>{user?.posts.length} posts</p>
+                <p className=' font-light text-gray-500 text-sm'>{user?.posts?.length} posts</p>
             </div>
             <Search className=' mr-5' />
         </div>

@@ -1,9 +1,10 @@
-import { Calendar, CircleCheckBig, Cross, X } from 'lucide-react'
+import { Calendar, CircleCheckBig } from 'lucide-react'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PostCard from '../../../components/PostCard'
 import { useUserStore } from '../../../stores/useUserStore'
 import ProfileEditWindow from './ProfileEditWindow'
+import { usePostStore } from '../../../stores/usePostStore'
 
 const tabs = [{name:"Posts"}, {name:"Replies"}, {name:"Highlights"}, {name:"Articles"}, {name:"Media"}, {name:"Likes"}]
 
@@ -12,6 +13,14 @@ const ProfileDetails = () => {
   const [editProfileActive, setEditProfileActive] = useState(false);
 
   const {user} = useUserStore();
+  const {userPosts, getPostsByUser} = usePostStore();
+
+  useEffect(()=>{
+    getPostsByUser();
+    
+  }, [getPostsByUser])
+  console.log(userPosts);
+  
 
   return (
     <div className="flex flex-col">
@@ -25,7 +34,7 @@ const ProfileDetails = () => {
       <div className="relative h-60">
         {/* Banner image */}
         <Image
-          src="/1080x360.jpg"
+          src={user?.bannerImage ||"/1080x360.jpg"}
           alt="banner"
           fill
           className="object-cover"
@@ -34,7 +43,7 @@ const ProfileDetails = () => {
         {/* Profile picture */}
         <div className="absolute -bottom-16 left-5 rounded-full border-4 border-black">
           <Image
-            src="/pfp.jpg"
+            src={user?.profileImage || "/pfp.jpg"}
             alt="pfp"
             width={126}  // 96px (6rem) for a good size
             height={126}
@@ -56,7 +65,7 @@ const ProfileDetails = () => {
         <p className=' font-light text-sm ml-5 text-gray-500'>@{user?.username}</p>
         <p className=' mt-3 ml-5 '>{user?.bio}</p>
         <p className=' flex items-center text-gray-500 ml-5 mt-1 gap-2'>
-          <Calendar /> Joined {user?.createdAt.slice(0, 10)}
+          <Calendar /> Joined {user?.createdAt?.slice(0, 10)}
         </p>
         <div className=' flex ml-5 mt-1 gap-5'>
           <div className=' flex gap-1'>
@@ -80,14 +89,13 @@ const ProfileDetails = () => {
           ))}
         </div>
         {/* posts stuff below */}
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
+        {user && userPosts && userPosts.length>0 && 
+        userPosts?.map((userPost, index) => (
+          <PostCard 
+            key={index} 
+            userPost = {userPost}  
+          />
+        ))}
       </div>
     </div>
   )

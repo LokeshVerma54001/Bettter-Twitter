@@ -48,6 +48,19 @@ export const useUserStore = create((set, get) =>({
         }
     },
 
+    editProfile: async ({name, username, bio, profileImage, bannerImage}) =>{
+        try {
+            const res = await axios.post('/auth/editProfile', {
+                name, username, bio, profileImage, bannerImage
+            });
+            set({user:res.data});
+            return true
+        } catch (error) {
+            toast.error(error.response?.data?.message || "An error occurred");
+            return false;
+        }
+    },
+
     checkAuth: async () =>{
         set({checkingAuth: true});
         try {

@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import { useUserStore } from '../stores/useUserStore'
 import toast from 'react-hot-toast'
+import { useUtilStore } from '../stores/useUtilsStore'
 
 const navbarMenus = [
     { name: "Home", Icon: <Home className=' ml-5 size-8 lg:size-6' />, path: "/" },
@@ -21,6 +22,7 @@ const navbarMenus = [
 
 const NavBar = () => {
 
+    const {setShowCreatePostPopUp} = useUtilStore();
     const {logout} = useUserStore();
 
     const path = usePathname();
@@ -106,7 +108,8 @@ const NavBar = () => {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.1 }}
-                    className='bg-white text-black lg:w-60 w-14 font-bold h-14 rounded-4xl ml-3'
+                    className='bg-white hover:cursor-pointer text-black lg:w-60 w-14 font-bold h-14 rounded-4xl ml-3'
+                    onClick={() => setShowCreatePostPopUp(true)}
                 >
                     <Pen className='lg:hidden inline' />
                     <h1 className='hidden lg:inline'>Post</h1>

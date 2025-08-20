@@ -1,3 +1,4 @@
+import cloudinary from "../lib/cloudinary.js";
 import User from "../models/user.model.js";
 import jwt from 'jsonwebtoken';
 
@@ -90,6 +91,35 @@ export const logout = async (req, res) =>{
     } catch (error) {
         console.log("Error in logout controller", error.message);
         res.status(500).json({message:'server error', error: error.message});
+    }
+}
+
+export const editProfile = async (req, res) => {
+    try {
+        const {name, username, profileImage, bannerImage, bio} = req.body;
+        const user = await User.findOne(req.user._id);
+        if(!user){
+            return res.status(404).json({message: "User not found"});
+        }
+        if(profileImage){
+            const cloudinaryResponse = await cloudinary.uploader.upload(profileImage, {folder: 'profileImages'});
+            user.profileImage = cloudinaryResponse.secure_url;
+        }
+        if(bannerImage){
+            const cloudinaryResponse = await cloudinary.uploader.upload(bannerImage, {folder: 'bannerImages'});
+            user.bannerImage = cloudinaryResponse.secure_url;
+        }
+        if(name) user.name = name;
+        if(username) user.username = username;
+        if(bio) user.bio = bio;
+        const updatedUser = await user.save();
+        res.status(200).json({
+            message: "Profile updated successfully",
+            user: updatedUser
+        })
+    } catch (error) {
+        console.log("Error in Edit Profile controller", error.message);
+        res.status(500).json({message:"server error", error: error.message});
     }
 }
 
