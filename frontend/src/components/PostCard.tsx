@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Bookmark, ChartNoAxesColumn, Ellipsis, Heart, MessageCircle, Repeat, Upload, User } from 'lucide-react'
 import Image from "next/image"
+import { useRouter } from 'next/navigation'
 
 const icons = [
     {icon: <MessageCircle size={20} />},
@@ -12,8 +13,14 @@ const icons = [
 ]
 
 const PostCard = ({ userPost }) => {
+
+  const router = useRouter();
+
   return (
-    <div className='w-full border-b border-gray-600 flex p-3 gap-3'>
+    <div 
+      className='w-full border-b border-gray-600 flex p-3 gap-3'
+      onClick={() => router.push(`/post/${userPost?._id}`)}
+    >
       {/* Profile Image */}
       <motion.div
         initial={{x:-10, opacity:0}}

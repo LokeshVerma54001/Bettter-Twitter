@@ -6,11 +6,12 @@ import { useUserStore } from '../../../stores/useUserStore'
 import ProfileEditWindow from './ProfileEditWindow'
 import { usePostStore } from '../../../stores/usePostStore'
 
-const tabs = [{name:"Posts"}, {name:"Replies"}, {name:"Highlights"}, {name:"Articles"}, {name:"Media"}, {name:"Likes"}]
+const tabs = [{name:"Posts"}, {name:"Replies"}, {name:"Highlights"}, {name:"Media"}, {name:"Likes"}]
 
 const ProfileDetails = () => {
 
   const [editProfileActive, setEditProfileActive] = useState(false);
+  const [activeTab, setActiveTab] = useState("Posts");
 
   const {user} = useUserStore();
   const {userPosts, getPostsByUser} = usePostStore();
@@ -47,6 +48,7 @@ const ProfileDetails = () => {
             alt="pfp"
             width={126}  // 96px (6rem) for a good size
             height={126}
+            
             className="rounded-full"
           />
         </div>
@@ -54,7 +56,7 @@ const ProfileDetails = () => {
       <div className=' flex flex-col h-66 '>
         <button 
           onClick={(() => setEditProfileActive(true))}
-          className=' self-end bg-white text-black mt-5 mr-5 px-7 py-2 rounded-full'
+          className=' self-end hover:cursor-pointer bg-white text-black mt-5 mr-5 px-7 py-2 rounded-full'
         >Edit</button>
         <div className=' flex ml-5 mt-3 items-center gap-3'>
           <h1 className=' font-bold text-2xl'>{user?.name}</h1>
@@ -69,11 +71,11 @@ const ProfileDetails = () => {
         </p>
         <div className=' flex ml-5 mt-1 gap-5'>
           <div className=' flex gap-1'>
-            <h1 className=' font-bold'>{user?.following.length}</h1>
+            <h1 className=' font-bold'>{user?.following?.length}</h1>
             <p className=' text-gray-500'>Following</p>
           </div>
           <div className='flex gap-1'>
-            <h2 className=' font-bold'>{user?.followers.length}</h2>
+            <h2 className=' font-bold'>{user?.followers?.length}</h2>
             <p className=' text-gray-500'>Followers</p>
           </div>
         </div>
@@ -82,20 +84,24 @@ const ProfileDetails = () => {
           {tabs.map((tab, index) =>(
             <div
               key={index}
-              className=' w-[16.6%] flex items-center justify-center h-10 mt-2.5 hover:bg-gray-900 border-b border-gray-600'
+              className=' w-[20%] hover:cursor-pointer flex flex-col items-center justify-center h-10 mt-2.5 hover:bg-gray-900 border-b border-gray-600'
+              onClick={() => setActiveTab(tab.name)}
             >
               {tab.name}
+              <span className={` ${tab.name === activeTab?"inline": "hidden"} border-b-4 border-blue-400 w-[80%] `}></span>
             </div>
           ))}
         </div>
         {/* posts stuff below */}
-        {user && userPosts && userPosts.length>0 && 
-        userPosts?.map((userPost, index) => (
-          <PostCard 
-            key={index} 
-            userPost = {userPost}  
-          />
-        ))}
+        {/* posts  */}
+        {activeTab === 'Posts' && 
+          userPosts.map((userPost, index) => (
+            <PostCard 
+              key={index} 
+              userPost={userPost}  
+            />
+          ))
+        }
       </div>
     </div>
   )

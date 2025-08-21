@@ -55,3 +55,42 @@ export const getUserPosts = async (req, res) => {
         return res.status(500).json({message: "Server error", error: error.message});
     }
 }
+
+export const getAllPosts = async (req, res) => {
+  try {
+    const { lastCreatedAt } = req.query; // frontend sends last post timestamp
+    const limit = parseInt(req.query.limit) || 20;
+
+    let query = {};
+    if (lastCreatedAt) {
+      query.createdAt = { $lt: new Date(lastCreatedAt) }; 
+    }
+
+    const posts = await Post.find(query)
+      .populate("author", "username profileImage")
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      posts
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const getPostDetails = async (req, res) => {
+    try {
+        const {id} = req.body;
+        const post = await Post.findOne({_id: id}).populate("author", "username name profileImage");
+        if(!post){
+            return res.status(404).json({message: "Post not found"});
+        }
+        return res.status(200).json({message: "Post details found successfully", post});
+    } catch (error) {
+        console.log("Error in getPostdetails controller", error.message);
+        return res.status(500).json({message: "Server Error", error: error.message});
+    }
+}
