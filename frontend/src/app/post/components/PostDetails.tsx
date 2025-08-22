@@ -4,6 +4,7 @@ import { usePostStore } from '../../../stores/usePostStore';
 import { Bookmark, ChartNoAxesColumn, Ellipsis, FileImage, Heart, MessageCircle, MoveLeft, Repeat, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { useUserStore } from '../../../stores/useUserStore';
+import PostCard from '../../../components/PostCard';
 
 const icons = [
     {icon: <MessageCircle 
@@ -176,6 +177,11 @@ const PostDetails = () => {
                                 type="text" 
                                 className=' focus:outline-none'
                                 placeholder='Post your reply'
+                                value={replyContent.content}
+                                onChange={(e)=> setReplyContent({
+                                    ...replyContent,
+                                    content: e.target.value
+                                })}
                             />
                         </div>
                         <button
@@ -204,6 +210,12 @@ const PostDetails = () => {
                     />
                 </div>
                 {/* comment section */}
+                {postDetails?.replies?.map((reply, index) => (
+                    <PostCard
+                        key={index}
+                        userPost={reply}
+                    />
+                ))}
             </div>
         </div>
   )

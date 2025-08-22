@@ -41,6 +41,46 @@ export const createPost = async (req, res) => {
     }
 }
 
+export const createReply = async (req, res) => {
+    try {
+        const { content, media, parentPost } = req.body;
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({ message: "User not Found" });
+        }
+        let mediaLinks = [];
+        if (media && media.length > 0) {
+            const uploadPromises = media.map(file =>
+                cloudinary.uploader.upload(file, { folder: "posts" })
+            );
+            const results = await Promise.all(uploadPromises);
+            mediaLinks = results.map(r => r.secure_url);
+        }
+        const post = await Post.create({
+            content,
+            media: mediaLinks,
+            author: user._id,
+            parentPost,
+            isReply: true,
+        });
+        user.posts.push(post._id);
+        await user.save();
+        const parent = await Post.findById(parentPost);
+        if (parent) {
+            parent.replies.push(post._id);
+            await parent.save();
+        }
+        return res.status(201).json({
+            message: "Reply created successfully",
+            post,
+        });
+    } catch (error) {
+        console.log("Error in createReply controller", error.message);
+        return res.status(500).json({ message: "Server Error", error: error.message });
+    }
+};
+
+
 export const getUserPosts = async (req, res) => {
     try {
         const userPosts = await Post.find({author: req.user._id})
@@ -84,7 +124,15 @@ export const getAllPosts = async (req, res) => {
 export const getPostDetails = async (req, res) => {
     try {
         const {id} = req.body;
-        const post = await Post.findOne({_id: id}).populate("author", "username name profileImage");
+        const post = await Post.findOne({_id: id})
+        .populate("author", "username name profileImage")
+        .populate({
+            path:"replies",
+            populate: {
+                path: "author",
+                select: "username name profileImage"
+            }
+        })
         if(!post){
             return res.status(404).json({message: "Post not found"});
         }
@@ -94,3 +142,4 @@ export const getPostDetails = async (req, res) => {
         return res.status(500).json({message: "Server Error", error: error.message});
     }
 }
+
