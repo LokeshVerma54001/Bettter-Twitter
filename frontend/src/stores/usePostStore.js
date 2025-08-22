@@ -60,6 +60,15 @@ export const usePostStore = create((set, get) => ({
         } catch (error) {
             console.log("Error in getPostDetails:", error);
         }
-    }
+    },
 
+    createReply: async (reply, parentPost) => {
+        try {
+            const {content, media} = reply;
+            const res = await axios.post('/post/createReply', {content, media, parentPost});
+            
+        } catch (error) {
+            console.log("Error in createReply:", error);    
+        }
+    }
 }))

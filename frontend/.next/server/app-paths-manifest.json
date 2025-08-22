@@ -1,11 +1,5 @@
 {
   "/page": "app/page.js",
-  "/profile/page": "app/profile/page.js",
   "/login/page": "app/login/page.js",
-  "/explore/page": "app/explore/page.js",
-  "/post/[id]/page": "app/post/[id]/page.js",
-  "/notifications/page": "app/notifications/page.js",
-  "/messages/page": "app/messages/page.js",
-  "/communities/page": "app/communities/page.js",
-  "/premium/page": "app/premium/page.js"
+  "/post/[id]/page": "app/post/[id]/page.js"
 }
