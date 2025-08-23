@@ -1,6 +1,8 @@
+import { populate } from "dotenv";
 import cloudinary from "../lib/cloudinary.js";
 import User from "../models/user.model.js";
 import jwt from 'jsonwebtoken';
+import path from "path";
 
 const generateTokens = (userId) =>{
     const accessToken = jwt.sign({userId}, process.env.ACCESS_TOKEN_SECRET, {
@@ -147,8 +149,74 @@ export const refereshToken = async (req, res) =>{
 
 export const getProfile = async (req, res) => {
     try {
-        res.json(req.user);
+        const user = await User.findById(req.user._id)
+        .select("-password") // hide password
+        .populate({
+            path: "posts",
+            options: { sort: { createdAt: -1 } },
+            populate: {
+            path: "author",
+            select: "username name profileImage",
+            },
+        })
+        .populate({
+            path: "likedPosts",
+            options: { sort: { createdAt: -1 } },
+            populate: {
+            path: "author",
+            select: "username name profileImage",
+            },
+        });
+        if(!user){
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(user);
     } catch (error) {
         res.status(500).json({message: "Server error", error: error.message});
     }
 }
+
+export const getRandomUsers = async (req, res) => {
+    try {
+        const users = await User.aggregate([
+            {$match: {_id: {$ne: req.user._id}}},
+            {$sample: {size: 3}},
+            {$project: {password: 0}}
+        ]);
+        res.status(200).json(users);
+    } catch (error) {
+        console.log("Error in getRandomUsers controller", error.message);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+export const getOtherUser = async (req, res) => {
+  try {
+    const userId = req.body.id; // this should be just a string
+    const user = await User.findById(userId).select("-password")
+    .populate({
+            path: "posts",
+            options: { sort: { createdAt: -1 } },
+            populate: {
+            path: "author",
+            select: "username name profileImage",
+            },
+        })
+        .populate({
+            path: "likedPosts",
+            options: { sort: { createdAt: -1 } },
+            populate: {
+            path: "author",
+            select: "username name profileImage",
+            },
+        });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log("Error in getOtherUser controller:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

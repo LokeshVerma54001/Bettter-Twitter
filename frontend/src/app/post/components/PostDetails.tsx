@@ -10,27 +10,27 @@ const icons = [
     {icon: <MessageCircle 
         size={40} 
         className=' hover:text-sky-500 hover:cursor-pointer py-2 px-2 hover:bg-sky-300/10 rounded-lg '
-    />},
+    />, name:"comments"},
     {icon: <Repeat 
         size={40} 
         className=' hover:text-emerald-500 hover:cursor-pointer py-2 px-2 hover:bg-emerald-300/10 rounded-lg '
-    />},
+    />, name:"retweets"},
     {icon: <Heart 
         size={40} 
         className=' hover:text-red-500 hover:cursor-pointer py-2 px-2 hover:bg-red-300/10 rounded-lg '
-    />},
+    />, name:"likes"},
     {icon: <ChartNoAxesColumn 
         size={40} 
         className=' hover:text-sky-500 hover:cursor-pointer py-2 px-2 hover:bg-sky-300/10 rounded-lg '
-    />},
+    />, name:"views"},
     {icon: <Bookmark 
         size={40} 
         className=' hover:text-sky-500 hover:cursor-pointer py-2 px-2 hover:bg-sky-300/10 rounded-lg '
-    />},
+    />, name: "bookmarks"},
     {icon: <Upload 
         size={40} 
         className=' hover:text-sky-500 hover:cursor-pointer py-2 px-2 hover:bg-sky-300/10 rounded-lg '
-    />},
+    />, name:"shares"},
 ]
 
 const PostDetails = () => {
@@ -153,9 +153,13 @@ const PostDetails = () => {
                     {icons.map((icon, index) => (
                         <div 
                             key={index}
-                            className=' w-[16.6%] flex items-center justify-center my-5'
+                            className=' w-[16.6%] flex gap-1 items-center justify-center my-5'
                         >
-                            {icon.icon}
+                            {icon.icon}{icon.name==='comments'?postDetails?.replies?.length:
+                            icon.name==='likes'?postDetails?.likes?.length:
+                            icon.name==='retweets'?postDetails?.retweets?.length:
+                            icon.name==='views'?postDetails?.views:
+                            icon.name==='bookmarks'?postDetails?.bookmarks?.length:""}
                         </div>
                     ))}
                 </div>

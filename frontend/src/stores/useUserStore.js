@@ -61,6 +61,24 @@ export const useUserStore = create((set, get) =>({
         }
     },
 
+    getRandomUsers: async () => {
+        try {
+            const res = await axios.get('/auth/getRandomUsers');
+            return res.data;
+        } catch (error) {
+            console.log("error in getRandomUsers:", error);
+        }
+    },
+
+    getOtherUser: async (id) => {
+        try {
+            const res = await axios.post('/auth/getOtherUser', {id});
+            return res.data;
+        } catch (error) {
+            console.log("Error in getOtherUser", error);
+        }
+    },
+
     checkAuth: async () =>{
         set({checkingAuth: true});
         try {
@@ -85,6 +103,7 @@ export const useUserStore = create((set, get) =>({
             throw error;
         }
     },
+
 
 }));
 
@@ -119,4 +138,5 @@ axios.interceptors.response.use(
 		}
 		return Promise.reject(error);
 	}
+
 );

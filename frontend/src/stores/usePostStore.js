@@ -2,28 +2,17 @@ import {create} from 'zustand';
 import axios from '../lib/axios'
 
 export const usePostStore = create((set, get) => ({
-    userPosts: [],
     allPosts: [],
     hasMore: true,
     nextCursor: null,
 
     createPost: async ({content, media}) =>{
         try {
-            const res = await axios.post('/post/create', {content, media});
-            set({userPosts: res.data.userPosts});
+            await axios.post('/post/create', {content, media});
             return true;
         } catch (error) {
             console.log("Error in createPost ", error);    
             return false;
-        }
-    },
-
-    getPostsByUser: async () => {
-        try {
-            const res = await axios.get('/post/getUserPosts');
-            set({userPosts: res.data.userPosts});
-        } catch (error) {
-            console.log("Error in getPostByUser", error);
         }
     },
 
@@ -71,5 +60,15 @@ export const usePostStore = create((set, get) => ({
             console.log("Error in createReply:", error);   
             return false 
         }
-    }
+    },
+
+    likePost: async (postId) =>{
+        try {
+            const res = await axios.post('/post/likePost', {postId});
+            return res.data.likes
+        } catch (error) {
+            console.log("error in likePost", error);
+        }
+    },
+
 }))

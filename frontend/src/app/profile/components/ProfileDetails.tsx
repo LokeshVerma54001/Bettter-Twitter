@@ -14,14 +14,6 @@ const ProfileDetails = () => {
   const [activeTab, setActiveTab] = useState("Posts");
 
   const {user} = useUserStore();
-  const {userPosts, getPostsByUser} = usePostStore();
-
-  useEffect(()=>{
-    getPostsByUser();
-    
-  }, [getPostsByUser])
-  console.log(userPosts);
-  
 
   return (
     <div className="flex flex-col">
@@ -95,10 +87,19 @@ const ProfileDetails = () => {
         {/* posts stuff below */}
         {/* posts  */}
         {activeTab === 'Posts' && 
-          userPosts.map((userPost, index) => (
+          user?.posts?.map((userPost, index) => (
             <PostCard 
               key={index} 
               userPost={userPost}  
+            />
+          ))
+        }
+        {/* likes */}
+        {activeTab === 'Likes' &&
+          user?.likedPosts?.map((userPost, index) =>(
+            <PostCard 
+              key={index}
+              userPost={userPost}
             />
           ))
         }

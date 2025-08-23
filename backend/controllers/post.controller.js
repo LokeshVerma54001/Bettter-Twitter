@@ -80,22 +80,6 @@ export const createReply = async (req, res) => {
     }
 };
 
-
-export const getUserPosts = async (req, res) => {
-    try {
-        const userPosts = await Post.find({author: req.user._id})
-            .populate("author", "username ProfileImage")
-            .sort({createdAt: -1});
-        res.status(200).json({
-            message: "Post created successfully",
-            userPosts
-        })
-    } catch (error) {
-        console.log("Error getting user Posts controller:", error);
-        return res.status(500).json({message: "Server error", error: error.message});
-    }
-}
-
 export const getAllPosts = async (req, res) => {
   try {
     const { lastCreatedAt } = req.query; // frontend sends last post timestamp
@@ -143,3 +127,34 @@ export const getPostDetails = async (req, res) => {
     }
 }
 
+export const likePost = async (req, res) =>{
+    try {
+        const {postId} = req.body;
+        const post = await Post.findById(postId);
+        if(!post) res.status(404).json({message: "Post not found"});
+        const user = await User.findById(req.user._id);
+        if(!user) res.status(404).json({message: "User not found"});
+        const alreadyLiked = post.likes.includes(user._id);
+        if(alreadyLiked){
+            post.likes = post.likes.filter(
+                (id) => id.toString() !== user._id.toString()
+            );
+            user.likedPosts = user.likedPosts.filter(
+                (id) => id.toString() !== post._id.toString()
+            );
+            await post.save();
+            await user.save();
+            return res.status(200).json({message: "Post unliked successfully", likes: post.likes.length});
+        }
+        else{
+            post.likes.push(user._id);
+            user.likedPosts.push(post._id);
+            await post.save();
+            await user.save();
+            return res.status(200).json({message: "Post liked successfully", likes: post.likes.length});
+        }
+    } catch (error) {
+        console.log("Error in likePost controller", error.message);
+        return res.status(500).json({message: "Server Error", error: error.message});
+    }
+}
