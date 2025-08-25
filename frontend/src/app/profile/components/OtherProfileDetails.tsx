@@ -3,19 +3,39 @@ import PostCard from '../../../components/PostCard'
 import { useUserStore } from '../../../stores/useUserStore';
 import Image from 'next/image';
 import { Calendar, CircleCheckBig } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 const tabs = [{name:"Posts"}, {name:"Replies"}, {name:"Highlights"}, {name:"Media"}, {name:"Likes"}]
 
 const OtherProfileDetails = () => {
 
-  const [setEditProfileActive] = useState(false);
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Posts");
-  
-  const {getOtherUser} = useUserStore();
+  const {getOtherUser, followUser, user:selfUser} = useUserStore();
   const [user, setUser] = useState(null);
   const params = useParams();
   const id = params.id;
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    if (selfUser && user) {
+      setIsFollowing(selfUser.following?.includes(user._id));
+    }
+  }, [selfUser, user]);
+
+  const handleFollowButton = async () =>{
+    try {
+      const success = await followUser(user?._id);
+      if(success){
+        setIsFollowing((prevState) => !prevState);
+      }
+      else{
+        throw new Error("Error following/unfollowing user");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
   useEffect(() => {
       const fetchOtherUser = async ()=>{
@@ -56,8 +76,10 @@ const OtherProfileDetails = () => {
           />
         </div>
       </div>
+      {!isFollowing && <button onClick={handleFollowButton} className=' hover:cursor-pointer self-end bg-white text-black rounded-2xl px-5 py-1 m-5 font-bold'>Follow</button>}
+      {isFollowing && <button onClick={handleFollowButton} className=' hover:cursor-pointer self-end bg-white text-black rounded-2xl px-5 py-1 m-5 font-bold '>Following</button>}
       <div className=' flex flex-col h-66 '>
-        <div className=' flex ml-5 mt-20 items-center gap-3'>
+        <div className=' flex ml-5 items-center gap-3'>
           <h1 className=' font-bold text-2xl'>{user?.name}</h1>
           <button className=' flex border rounded-full py-0.5 px-2 text-sm items-center'>
             <CircleCheckBig className=' text-sky-500 ' size={20}/> Get Verified
@@ -69,11 +91,11 @@ const OtherProfileDetails = () => {
           <Calendar /> Joined {user?.createdAt?.slice(0, 10)}
         </p>
         <div className=' flex ml-5 mt-1 gap-5'>
-          <div className=' flex gap-1'>
+          <div className=' flex gap-1 hover:cursor-pointer' onClick={() => router.push(`/following/${user?._id}`)}>
             <h1 className=' font-bold'>{user?.following?.length}</h1>
             <p className=' text-gray-500'>Following</p>
           </div>
-          <div className='flex gap-1'>
+          <div className='flex gap-1 hover:cursor-pointer' onClick={() => router.push(`/followers/${user?._id}`)}>
             <h2 className=' font-bold'>{user?.followers?.length}</h2>
             <p className=' text-gray-500'>Followers</p>
           </div>

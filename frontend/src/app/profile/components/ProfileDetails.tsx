@@ -1,10 +1,10 @@
 import { Calendar, CircleCheckBig } from 'lucide-react'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PostCard from '../../../components/PostCard'
 import { useUserStore } from '../../../stores/useUserStore'
 import ProfileEditWindow from './ProfileEditWindow'
-import { usePostStore } from '../../../stores/usePostStore'
+import { useRouter } from 'next/navigation'
 
 const tabs = [{name:"Posts"}, {name:"Replies"}, {name:"Highlights"}, {name:"Media"}, {name:"Likes"}]
 
@@ -12,7 +12,7 @@ const ProfileDetails = () => {
 
   const [editProfileActive, setEditProfileActive] = useState(false);
   const [activeTab, setActiveTab] = useState("Posts");
-
+  const router = useRouter();
   const {user} = useUserStore();
 
   return (
@@ -62,11 +62,11 @@ const ProfileDetails = () => {
           <Calendar /> Joined {user?.createdAt?.slice(0, 10)}
         </p>
         <div className=' flex ml-5 mt-1 gap-5'>
-          <div className=' flex gap-1'>
+          <div className=' flex gap-1 hover:cursor-pointer' onClick={() => router.push(`/following/${user?._id}`)}>
             <h1 className=' font-bold'>{user?.following?.length}</h1>
             <p className=' text-gray-500'>Following</p>
           </div>
-          <div className='flex gap-1'>
+          <div className='flex gap-1 hover:cursor-pointer' onClick={() => router.push(`/followers/${user?._id}`)}>
             <h2 className=' font-bold'>{user?.followers?.length}</h2>
             <p className=' text-gray-500'>Followers</p>
           </div>

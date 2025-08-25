@@ -209,7 +209,13 @@ export const getOtherUser = async (req, res) => {
             path: "author",
             select: "username name profileImage",
             },
-        });
+        }).populate({
+            path: "following",
+            select: "name username bio profileImage"
+        }).populate({
+            path: "followers",
+            select: "name username bio profileImage"
+        })
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -220,3 +226,28 @@ export const getOtherUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const followUser = async(req, res) =>{
+    try {
+        const {id} = req.body;
+        const otherUser = await User.findById(id);
+        const user = await User.findById(req.user._id);
+        if(!user || !otherUser) return res.status(404).json({message:"User not found"});
+        if(user.following.includes(otherUser._id)){
+            user.following = user.following.filter((id) => id.toString() !== otherUser._id.toString());
+            otherUser.followers = otherUser.followers.filter((id) => id.toString() !== user._id.toString());
+            await user.save();
+            await otherUser.save();
+            res.status(200).json({message: "user unfollowed successfully"});
+        }else{
+            user.following.push(otherUser._id);
+            otherUser.followers.push(user._id);
+            await user.save();
+            await otherUser.save();
+            res.status(200).json({message: "User followed successfully"});
+        }
+    } catch (error) {
+        console.log("Error in followUser controller", error.message);
+        res.status(500).json({message: "Server Error", error: error.message});
+    }
+}

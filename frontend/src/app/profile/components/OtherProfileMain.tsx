@@ -1,6 +1,5 @@
 import { Search } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import ProfileDetails from './ProfileDetails'
 import { useUserStore } from '../../../stores/useUserStore'
 import { useParams } from 'next/navigation'
 import OtherProfileDetails from './OtherProfileDetails'

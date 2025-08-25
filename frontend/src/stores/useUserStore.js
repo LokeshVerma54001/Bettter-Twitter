@@ -79,6 +79,16 @@ export const useUserStore = create((set, get) =>({
         }
     },
 
+    followUser: async (id) => {
+        try {
+            await axios.post('/auth/followUser', {id});
+            return true;
+        } catch (error) {
+            console.log("Error in followUser", error);
+            return false;
+        }
+    },
+
     checkAuth: async () =>{
         set({checkingAuth: true});
         try {
